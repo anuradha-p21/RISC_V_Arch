@@ -294,7 +294,7 @@ int startdecoder::Fetch()
         {
             if (clk > 1)
                 fetch_Q.push(p);
-        } //first queue will be empty , then before fetch wpnt it push NOP?
+        } 
         fetch_Q.push(op);
 
         fet_sucess = 1;
