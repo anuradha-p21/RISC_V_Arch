@@ -32,16 +32,7 @@ void startdecoder::init_decode() {                                            //
     set_reg_val(1, 20);
     set_reg_val(2, 0);
     set_reg_val(4, 0);
-    // cout << dd->getOPcode(
-    /* for (int i = 0; i < 5; i++) {
-         inst = ins_array[i];
-         InsType();
-         cout << "Desc: " << desc << "rs1 :" << rs1 << " " << "rs2" << rs2 << " rd : " << rd << " imm12 :" << imm12 << endl;
-     }
-     cout << dd->getOPcode(ins_array[1]);
-     cout << dd->getOPcode(ins_array[2]);
-     cout << dd->getOPcode(ins_array[3]);
-     cout << dd->getOPcode(ins_array[4]);*/
+   
 
 }
 
@@ -89,13 +80,12 @@ void startdecoder::InsType()
         break;
     case 'J':   dd = new J_decode(inst);
         desc = dd->getFuncDesc();
-        // rs1 = dd->getRs1();         //rs1 also not in j type
-        // rs2 = dd->getRs2();  //Rs2 is the shiftamount bits
+   
         rd = dd->getRd();
         imm12 = dd->getImm12();
         cnt = dd->getControlSignals(desc);
         break;
-    case 'A':   dd = new J_decode(inst);           //what is a type
+    case 'A':   dd = new J_decode(inst);           
         desc = dd->getFuncDesc();
         rs1 = dd->getRs1();
         rs2 = dd->getRs2();
@@ -109,7 +99,7 @@ void startdecoder::InsType()
         imm20 = dd->getImm20();
         cnt = dd->getControlSignals(desc);
         break;
-    case 'W':   dd = new U_decode(inst);       //what is W type
+    case 'W':   dd = new U_decode(inst);       
         desc = dd->getFuncDesc();
         rd = dd->getRd();
         imm20 = dd->getImm20();
@@ -209,7 +199,7 @@ int startdecoder::ALu_decode(op_val& op)
 
         //hard coded for this example
         op.c_imm12_val = -4;
-        // decode_Q.push(op);
+ 
         break;
     case 4:     //lw function : load the rd register from offset calculated reg
         imm_offset = op.rs1 + op.c_imm12_val;    //see if this reg is free
@@ -218,9 +208,7 @@ int startdecoder::ALu_decode(op_val& op)
             // if (check_depend(imm_offset) == 0) {
             if (bool_reg[imm_offset] == false) {
                 op.c_imm12_val = get_reg_val((uint8_t)imm_offset);    //get the value to be load into rd and saved in c_imm12_val for alu
-               // bool_reg[imm_offset] = false;      //release the register after reading its value
-             //   decode_Q.push(op);
-            }
+            
             else
             {
                 return 0;
@@ -230,8 +218,7 @@ int startdecoder::ALu_decode(op_val& op)
         {
             op.c_imm12_val = get_reg_val((uint8_t)imm_offset);    //get the value to be load into rd and saved in c_imm12_val for alu
             bool_reg[imm_offset] = false;      //release the register after reading its value
-          //  decode_Q.push(op);
-            // msg = msg + "decode " + codeDesc[op.c_desc] + " " + to_string(op.rd) + " " + to_string(op.c_imm12_val) + "  ";
+         
         }
         break;
     case 5:     //sw store func : save the value of rs2 into calculated reg address
@@ -241,8 +228,7 @@ int startdecoder::ALu_decode(op_val& op)
                 op.c_imm12_val = imm_offset;    //address of the destination register is calculated and saved for alu
                 op.rs2_val = get_reg_val(op.rs2);   //rs2 value is saved and rs2 can be released
                 bool_reg[op.rs2] = false;
-                //  decode_Q.push(op);
-                  //   msg = msg + "decode " + codeDesc[op.c_desc] + " " + to_string(op.rs2) + " " + to_string(op.c_imm12_val) + "  ";
+               
             }
             else return 0;
         }
@@ -251,15 +237,13 @@ int startdecoder::ALu_decode(op_val& op)
             op.c_imm12_val = imm_offset;    //address of the destination register is calculated and saved for alu
             op.rs2_val = get_reg_val(op.rs2);   //rs2 value is saved and rs2 can be released
             bool_reg[op.rs2] = false;
-            // decode_Q.push(op);
-             // msg = msg + "decode " + codeDesc[op.c_desc] + " " + to_string(op.rs2) + " " + to_string(op.c_imm12_val) + "  ";
+            
         }
 
         break;
     case 30:    //bne function
 
-          //decode_Q.push(op);
-          //msg = msg + "decode " + codeDesc[op.c_desc] + " " + to_string(op.rs1_val) + " " + to_string(op.rs2_val) + "  ";
+         
         break;
     }
 
@@ -299,7 +283,7 @@ int startdecoder::Fetch()
         if (desc == 30)
             op.c_imm12_val = 0;
 
-        //if addi then imm value is -4, hard coded for this example, don't know to represent -ve imm values in mech code
+        //if addi then imm value is -4, hard coded for this example
         if (desc == 1)  op.c_imm12_val = -4;
 
         op.c_imm20_val = 0;//imm20;   //hard coded imm20 as this is not using in this example
@@ -315,7 +299,7 @@ int startdecoder::Fetch()
 
         fet_sucess = 1;
         // rs1 = rs2 = rd = -1;
-        if (desc >= 28 && desc <= 33)   //for all branch operations feed the pc with the branch address hardcoded
+        if (desc >= 28 && desc <= 33)   //for all branch operations feed the pc with the branch address 
         {
             //  pc = pc + imm12;
             pc = 0;      //this if for our current application
@@ -351,9 +335,8 @@ int startdecoder::execute(op_val& op)
         return 1;
         //break;
 
-    case 4:     //lw function   load rd with the value in c_imm12_val which is already calculated by alu_decode
-      // set_reg_val(op.rd, op.c_imm12_val);
-       // bool_reg[op.rd] = false;
+    case 4:     //lw function   
+     
         op.rd_val = op.c_imm12_val;
         exe_Q.push(op);    //push an empty struct so that writeback will get nope  
         log << "lw execute\n";
@@ -409,7 +392,7 @@ void startdecoder::start_process()
         if (fet_sucess)// no differentiation for add,
 
         {
-           // msg = msg + " fetch (" + codeDesc[desc] + " " + to_string(get_reg_val(rs1)) + " " + to_string(get_reg_val(rs2)) + " " + to_string(get_reg_val(rd)) + ") ";
+          
         
             if (codeDesc[desc] == "lw" || codeDesc[desc] == "sw")
             {
@@ -431,10 +414,7 @@ void startdecoder::start_process()
                 msg = msg + " fetch (" + codeDesc[desc] + " " + to_string(get_reg_val(rs1)) + " , " + to_string(get_reg_val(rs2)) + " , " + to_string(get_reg_val(rd)) + ") ";
             }
 
-               // msg = msg + " fetch (" + codeDesc[desc] + " " + to_string(get_reg_val(rs1)) + " " + to_string(get_reg_val(rs2)) + " " + to_string(get_reg_val(rd)) + ") ";
-
-                // msg = msg + "fetch (" + codeDesc[desc] + " " + to_string(rd_val) + " " + to_string(rs1_val) + " " + to_string(rs2_val) + ")";
-                 //msg = msg + "fetch (NOPE) ";
+               
          }
             
         log << " fetch end\n";
@@ -463,8 +443,7 @@ void startdecoder::start_process()
                     {
                         msg = msg + " decode (" + codeDesc[op_d.c_desc] + " "  + to_string(get_reg_val(op_d.rs1)) + " , " + to_string(get_reg_val(op_d.rs2)) + " , " + to_string(get_reg_val(rd)) + ") ";
                     }
-                   // msg = msg + " decode (" + codeDesc[op_d.c_desc] + " " + to_string(get_reg_val(rs1)) + " " + to_string(get_reg_val(rs2)) + " " + to_string(get_reg_val(rd)) + ") ";
-                    // msg = msg + "decode (" + codeDesc[op_d.c_desc] + ") "; // print the values op_d.rs1_val
+                  
                 }
                 else
                 {    //if dependencies then push null record
@@ -531,8 +510,7 @@ void startdecoder::start_process()
             {
                 ex_sucess = execute(op_e);
                 if (ex_sucess == 1) {
-                   // msg = msg + " execute (" + codeDesc[op_e.c_desc] + " " + to_string(get_reg_val(rs1)) + " " + to_string(get_reg_val(rs2)) + " " + to_string(get_reg_val(rd)) + ") ";
-                    // msg = msg + "execute (" + codeDesc[op_e.c_desc] + ") "; // values op_e.rs
+                 
                     if (codeDesc[op_e.c_desc] == "lw" || codeDesc[op_e.c_desc] == "sw")
                     {
                         msg = msg + " execute (" + codeDesc[op_e.c_desc] + " " + " x1 = " + to_string(get_reg_val(op_e.rs1)) + " , " + to_string(get_reg_val(op_e.rd)) + ") ";
@@ -553,8 +531,7 @@ void startdecoder::start_process()
                     return;
                 }
 
-                else {   //ex_sucess is 0, not sucessful  but execute will not return 0 and this will not be exe
-                    // = msg + "execute (" + codeDesc[op_e.c_desc] + ")";
+                else {   
                     msg = msg + " execute (" + codeDesc[op_e.c_desc] + " " + " x1 = " + to_string(get_reg_val(op_e.rs1)) + " , " + to_string(get_reg_val(op_e.rs2)) + " , " + to_string(get_reg_val(op_e.rd)) + ") ";
                     op_val p = { 0 };
                     p.c_desc = -1;
@@ -586,8 +563,7 @@ void startdecoder::start_process()
             exe_Q.pop();
             if (op_wb.c_desc >= 0) {
                 write_back(op_wb);
-               // msg = msg + " write_back (" + codeDesc[op_wb.c_desc] + " " + to_string(get_reg_val(rs1)) + " " + to_string(get_reg_val(rs2)) + " " + to_string(get_reg_val(rd)) + ") ";
-                // msg = msg + "write_back (" + codeDesc[op_wb.c_desc] + ")";
+              
                if (codeDesc[op_wb.c_desc] == "lw" || codeDesc[op_wb.c_desc] == "sw")
                 {
                     msg = msg + " write_back (" + codeDesc[op_wb.c_desc] + " " + " x1 = " + to_string(get_reg_val(op_wb.rs1)) + " , " + to_string(get_reg_val(op_wb.rd)) + ") ";
@@ -686,8 +662,7 @@ void startdecoder::printInstDescription() {
 void startdecoder::printControlSignals()
 {
     cout << "Control Signals: " << endl;
-    /* cout << "reg_wen,   reg_ren jump,    branch,  alu_op,  mem_wen, mem_ren, sel1,    sel2, sel3, sel4, sel5" << endl;
-     cout << "Signals: " << bitset<16>(cnt)<<endl<<endl;*/
+    
     bitset<16> controlBits(cnt);
     for (int i = 15; i >= 0; --i) {
         if (i % 4 == 0) cout << endl;
